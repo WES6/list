@@ -1,0 +1,84 @@
+{% extends 'admin/master.html' %}
+{% block body %}
+    <script src="{{ url_for('static',filename='echarts.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='echarts-wordcloud.min.js') }}"></script>
+
+    <!-- 为ECharts准备一个具备大小（宽高）的DOM容器-->
+    <div id='main' style='width:600px;height:400px;'></div>
+    <div id='main1' style='width:600px;height:400px;'></div>
+
+    <script>
+          //基于准备好的DOM，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+          //指定图表的配置项和数据
+        var option = {
+            title:{
+                text:'Comment'
+            },
+            //提示框组件
+            tooltip:{
+                //坐标轴触发，主要用于柱状图，折线图等
+                trigger:'axis'
+            },
+            //图例
+            legend:{
+                data:['词频']
+            },
+            //横轴
+            xAxis:{
+                data:eval('{{keys|safe }}')
+            },
+            //纵轴
+            yAxis:{},
+            //系列列表。每个系列通过type决定自己的图表类型
+            series:[{
+                name:'词频',
+                //折线图
+                type:'bar',
+                data:{{ values }}
+            }]
+        };
+        //使用刚指定的配置项和数据显示图表
+        myChart.setOption(option);
+    </script>
+
+    <script>
+     var myChart = echarts.init(document.getElementById('main1'));
+            //温馨提示：image 选取有严格要求不可过大；，否则firefox不兼容  iconfont上面的图标可以
+                myChart.setOption( {
+                    backgroundColor:'#fff',
+                    tooltip: {
+                        show: false
+                    },
+                    series: [{
+                        type: 'wordCloud',
+                        gridSize: 1,
+                        sizeRange: [12, 55],
+                        rotationRange: [-45, 0, 45, 90],
+                        textStyle: {
+                            normal: {
+                                color: function() {
+                                    return 'rgb(' +
+                                            Math.round(Math.random() * 255) +
+                                            ', ' + Math.round(Math.random() * 255) +
+                                            ', ' + Math.round(Math.random() * 255) + ')'
+                                }
+                            }
+                        },
+                        left: 'center',
+                        top: 'center',
+                        // width: '96%',
+                        // height: '100%',
+                        right: null,
+                        bottom: null,
+                        // width: 300,
+                        // height: 200,
+                        // top: 20,
+                        data: eval('{{datas|safe }}')
+                    }]
+                })
+
+
+    </script>
+
+{% endblock %}
